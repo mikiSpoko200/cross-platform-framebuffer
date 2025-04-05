@@ -5,8 +5,8 @@ edition = "2021"
 
 [dependencies]
 glutin = "0.32.2"
-glutin-winit = "0.5.0"
-anyhow = "1.0.97"
-glow = "0.14.0"
-raw-window-handle = "0.6.2"
+glutin-winit = "0.5"
+anyhow = "1"
+glow = "0.14"
+raw-window-handle = "0.6"
 winit = "0.30.9"
