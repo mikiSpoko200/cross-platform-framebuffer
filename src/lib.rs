@@ -53,7 +53,7 @@ struct MMap<'ctx, 'buffer, Format> {
     mapped_memory: *mut c_void,
 }
 
-impl<'ctx, 'buffer, Format> AsMut<[Format]> for MMap<'ctx, 'buffer, Format> {
+impl<Format> AsMut<[Format]> for MMap<'_, '_, Format> {
     fn as_mut(&mut self) -> &mut [Format] {
         unsafe {
             std::slice::from_raw_parts_mut(self.mapped_memory as *mut Format, self.buffer.length)
