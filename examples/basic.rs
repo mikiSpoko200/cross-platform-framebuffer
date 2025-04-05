@@ -63,18 +63,17 @@ impl<P: Painter<Pixel = [u8; 4]>> winit::application::ApplicationHandler for App
     ) {
         match event {
             winit::event::WindowEvent::RedrawRequested => {
-                self.surface.as_mut().map(
-                    |Surface {
-                         framebuffer,
-                         window,
-                     }| {
-                        framebuffer.draw(&mut self.painter);
+                if let Some(Surface {
+                    framebuffer,
+                    window,
+                }) = self.surface.as_mut()
+                {
+                    framebuffer.draw(&mut self.painter);
 
-                        // TODO: draw ui
+                    // TODO: draw ui
 
-                        window.request_redraw();
-                    },
-                );
+                    window.request_redraw();
+                };
             }
             winit::event::WindowEvent::CloseRequested => {
                 std::process::exit(0);
@@ -113,20 +112,18 @@ impl Painter for RGBPainter {
     type Pixel = [u8; 4];
 
     fn paint(&mut self, pixels: &mut [Self::Pixel]) {
-        let mut counter = 0;
         const RED: [u8; 4] = [255, 0, 0, 0];
         const GREEN: [u8; 4] = [0, 255, 0, 0];
         const BLUE: [u8; 4] = [0, 0, 255, 0];
 
-        for pixel in pixels {
-            let color = match (counter / (self.width / 4 * self.height)) % 4 {
+        for (index, pixel) in pixels.iter_mut().enumerate() {
+            let color = match (index / (self.width / 4 * self.height)) % 4 {
                 0 => RED,
                 1 => GREEN,
                 2 => BLUE,
                 3 => [0, 0, 0, 0],
                 _ => unreachable!(),
             };
-            counter += 1;
             *pixel = color;
         }
     }
@@ -188,7 +185,7 @@ impl Painter for LinePainter {
                 let dist = (y as isize - x as isize).abs();
 
                 // If the pixel is within the 8-pixel thickness of the diagonal, draw it
-                if dist <= 8 as isize {
+                if dist <= 8 {
                     // Access the pixel at (x, y)
                     let pixel = &mut pixels[y * self.width + x];
 
